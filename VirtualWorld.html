@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Hunt - Akash Malampati</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 10px;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        canvas {
+            background: #000;
+            display: block;
+            margin-bottom: 20px;
+            border: 3px solid #444;
+            border-radius: 10px;
+        }
+
+        #scoreboard {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        #icon-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .animal-icon {
+            width: 50px;
+            display: none;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bounce {
+            animation: bounce 0.5s ease-out;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        #win-message {
+            display: none;
+            background: green;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 20px;
+            margin-top: 15px;
+        }
+
+        #instructions {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <div id="game-container">
+        <h1>Animal Hunt Game</h1>
+
+        <canvas id="webgl" width="800" height="800"></canvas>
+        <p id="numdot">ms: - fps: -</p>
+
+        <div id="scoreboard">
+            <p><strong>Animals Found:</strong></p>
+            <p class="score" id="DogScore">🐶 Dogs Found: 0</p>
+            <p class="score" id="HorseScore">🐴 Horses Found: 0</p>
+            <p class="score" id="ElephantScore">🐘 Elephants Found: 0</p>
+        </div>
+
+        <div id="icon-container">
+            <img id="dogIcon" src="lib/imgs/dog_icon.jpeg" alt="Dog Icon" class="animal-icon">
+            <img id="horseIcon" src="lib/imgs/horse_icon.jpeg" alt="Horse Icon" class="animal-icon">
+            <img id="elephantIcon" src="lib/imgs/elephant_icon.jpeg" alt="Elephant Icon" class="animal-icon">
+        </div>
+
+        <p id="win-message">🎉 You have found all the animals! 🎉</p>
+
+        <p id="instructions">
+            There are animals hiding on the map. Find and collect all of them 3 times to win!
+        </p>
+
+        <div id="controls">
+            <h3>Controls:</h3>
+            <p><strong>W, A, S, D:</strong> Move</p>
+            <p><strong>Q, E:</strong> Pan Camera</p>
+            <p><strong>G:</strong> Break Walls</p>
+            <p><strong>Mouse:</strong> Look Around</p>
+        </div>
+    </div>
+
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix.js"></script>
+    <script src="Cube.js"></script>
+    <script src="duck.js"></script>
+    <script src="Camera.js"></script>
+    <script src="OBJView.js"></script>
+    <script src="World.js"></script>
+
+    <script>
+        let dogScore = 0, horseScore = 0, elephantScore = 0;
+
+        function updateScore(animal) {
+            let scoreElement = document.getElementById(animal + "Score");
+            let iconElement = document.getElementById(animal + "Icon");
+
+            let currentScore = parseInt(scoreElement.innerText.match(/\d+/)[0]);
+            scoreElement.innerText = animal.charAt(0).toUpperCase() + animal.slice(1) + " Found: " + (currentScore + 1);
+
+            // Show and animate the icon
+            iconElement.style.display = "inline-block";
+            iconElement.classList.add("bounce");
+            setTimeout(() => iconElement.classList.remove("bounce"), 500);
+
+            // Track score
+            if (animal === "Dog") dogScore++;
+            if (animal === "Horse") horseScore++;
+            if (animal === "Elephant") elephantScore++;
+
+        }
+    </script>
+</body>
+</html>
